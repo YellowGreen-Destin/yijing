@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오늘의 주역</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #guaContainer {
+            display: none;
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 50px; /* 괘들 간의 간격 */
+        }
+
+        .gua {
+            padding: 20px;
+            border: 1px solid #000;
+            width: 180px;
+            text-align: center;
+        }
+
+        .guaSymbols {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .guaSymbols p {
+    margin: 0;
+    line-height: 0.15;
+    font-size: 100px;
+}
+        
+
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 30px;
+            margin-bottom: 30px; /* 버튼과 괘 사이의 간격 */
+        }
+
+        #credits {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        #questionContainer {
+            margin-top: 30px;
+        }
+
+        #questionInput {
+            width: 60%;
+            padding: 10px;
+            font-size: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>오늘의 주역</h1>
+
+    <!-- 질문 입력란 -->
+    <div id="questionContainer">
+        <input type="text" id="questionInput" placeholder="질문을 입력하세요..." />
+    </div>
+    
+    <div id="guaContainer">
+        <div class="gua" id="gua1">
+            <h3 id="gua1Title"></h3>
+            <div class="guaSymbols" id="gua1Symbols"></div>
+        </div>
+        <div class="gua" id="gua2">
+            <h3 id="gua2Title"></h3>
+            <div class="guaSymbols" id="gua2Symbols"></div>
+        </div>
+    </div>
+    
+    <button id="newGuaBtn">새로운 괘 받기</button>
+
+    <p id="credits">✨ 제작 : 연유🌱</p>
+
+     <script>
+        const guaList = [
+            { number: 1, name: "건위천", symbols: ["⚊", "⚊", "⚊", "⚊", "⚊", "⚊"] },
+            { number: 2, name: "곤위지", symbols: ["⚋", "⚋", "⚋", "⚋", "⚋", "⚋"] },
+            { number: 3, name: "수뢰둔", symbols: ["⚋", "⚋", "⚋", "⚊", "⚋", "⚊"] },
+            { number: 4, name: "산수몽", symbols: ["⚋", "⚊", "⚋", "⚋", "⚋", "⚊"] },
+            { number: 5, name: "수천수", symbols: ["⚋", "⚋", "⚊", "⚊", "⚋", "⚊"] },
+            { number: 6, name: "천수송", symbols: ["⚊", "⚊", "⚋", "⚋", "⚊", "⚋"] },
+            { number: 7, name: "지수사", symbols: ["⚋", "⚋", "⚋", "⚊", "⚋", "⚋"] },
+            { number: 8, name: "수지비", symbols: ["⚋", "⚋", "⚋", "⚋", "⚋", "⚊"] },
+            { number: 9, name: "풍천소축", symbols: ["⚊", "⚊", "⚊", "⚋", "⚊", "⚋"] },
+            { number: 10, name: "천택리", symbols: ["⚊", "⚋", "⚊", "⚊", "⚊", "⚋"] },
+            { number: 11, name: "지천태", symbols: ["⚋", "⚋", "⚋", "⚊", "⚊", "⚊"] },
+            { number: 12, name: "천지비", symbols: ["⚊", "⚊", "⚊", "⚋", "⚋", "⚋"] },
+            { number: 13, name: "천화동인", symbols: ["⚊", "⚊", "⚊", "⚊", "⚋", "⚊"] },
+            { number: 14, name: "화천대유", symbols: ["⚊", "⚋", "⚊", "⚊", "⚊", "⚊"] },
+            { number: 15, name: "지산겸", symbols: ["⚋", "⚋", "⚊", "⚋", "⚋", "⚋"] },
+            { number: 16, name: "뇌지예", symbols: ["⚊", "⚋", "⚋", "⚋", "⚋", "⚋"] },
+            { number: 17, name: "지뢰복", symbols: ["⚋", "⚋", "⚊", "⚊", "⚋", "⚋"] },
+            { number: 18, name: "산뢰비", symbols: ["⚊", "⚋", "⚋", "⚋", "⚊", "⚋"] },
+            { number: 19, name: "지수귀", symbols: ["⚋", "⚊", "⚊", "⚊", "⚋", "⚊"] },
+            { number: 20, name: "풍지예", symbols: ["⚊", "⚋", "⚊", "⚋", "⚊", "⚋"] },
+            { number: 21, name: "화천식", symbols: ["⚊", "⚊", "⚋", "⚋", "⚋", "⚊"] },
+            { number: 22, name: "화풍당", symbols: ["⚊", "⚋", "⚊", "⚋", "⚋", "⚋"] },
+            { number: 23, name: "천산압", symbols: ["⚋", "⚋", "⚋", "⚊", "⚋", "⚋"] },
+            { number: 24, name: "산화복", symbols: ["⚋", "⚋", "⚋", "⚊", "⚊", "⚊"] },
+            { number: 25, name: "풍수수", symbols: ["⚊", "⚊", "⚋", "⚋", "⚋", "⚊"] },
+            { number: 26, name: "산수뇌", symbols: ["⚊", "⚊", "⚋", "⚊", "⚋", "⚋"] },
+            { number: 27, name: "지수귀", symbols: ["⚋", "⚊", "⚊", "⚊", "⚋", "⚊"] },
+            { number: 28, name: "천화동인", symbols: ["⚊", "⚊", "⚊", "⚊", "⚋", "⚊"] },
+            { number: 29, name: "산천미", symbols: ["⚊", "⚋", "⚋", "⚋", "⚊", "⚋"] },
+            { number: 30, name: "산풍정", symbols: ["⚊", "⚋", "⚊", "⚋", "⚊", "⚊"] },
+            { number: 31, name: "풍천정", symbols: ["⚋", "⚋", "⚊", "⚋", "⚋", "⚊"] },
+            { number: 32, name: "천수천", symbols: ["⚊", "⚋", "⚊", "⚋", "⚊", "⚊"] },
+            { number: 33, name: "풍지예", symbols: ["⚊", "⚋", "⚊", "⚋", "⚋", "⚋"] },
+            { number: 34, name: "화뢰비", symbols: ["⚊", "⚊", "⚊", "⚊", "⚋", "⚋"] },
+            { number: 35, name: "화화성", symbols: ["⚊", "⚋", "⚋", "⚊", "⚋", "⚋"] },
+            { number: 36, name: "천풍득", symbols: ["⚊", "⚊", "⚊", "⚋", "⚊", "⚋"] },
+            { number: 37, name: "산풍형", symbols: ["⚋", "⚋", "⚊", "⚊", "⚊", "⚊"] },
+            { number: 38, name: "천뢰득", symbols: ["⚊", "⚋", "⚊", "⚋", "⚊", "⚋"] },
+            { number: 39, name: "지수기", symbols: ["⚊", "⚊", "⚋", "⚊", "⚋", "⚊"] },
+            { number: 40, name: "화풍양", symbols: ["⚊", "⚋", "⚊", "⚋", "⚊", "⚊"] },
+            { number: 41, name: "지수만", symbols: ["⚊", "⚋", "⚋", "⚊", "⚋", "⚋"] },
+            { number: 42, name: "화수봉", symbols: ["⚊", "⚊", "⚊", "⚋", "⚋", "⚋"] },
+            { number: 43, name: "풍수수", symbols: ["⚋", "⚊", "⚋", "⚊", "⚋", "⚋"] },
+            { number: 44, name: "산수내", symbols: ["⚊", "⚋", "⚊", "⚊", "⚋", "⚊"] },
+            { number: 45, name: "풍수환", symbols: ["⚊", "⚋", "⚋", "⚋", "⚊", "⚊"] },
+            { number: 46, name: "화수위", symbols: ["⚊", "⚊", "⚋", "⚋", "⚊", "⚋"] },
+            { number: 47, name: "천수복", symbols: ["⚋", "⚊", "⚋", "⚊", "⚊", "⚊"] },
+            { number: 48, name: "풍수패", symbols: ["⚋", "⚋", "⚊", "⚊", "⚋", "⚋"] },
+            { number: 49, name: "산수하", symbols: ["⚊", "⚋", "⚋", "⚊", "⚋", "⚋"] },
+            { number: 50, name: "화수대", symbols: ["⚊", "⚊", "⚋", "⚊", "⚊", "⚋"] },
+            { number: 51, name: "지수백", symbols: ["⚋", "⚊", "⚋", "⚊", "⚋", "⚊"] },
+            { number: 52, name: "산수추", symbols: ["⚋", "⚊", "⚋", "⚊", "⚊", "⚊"] },
+            { number: 53, name: "천수산", symbols: ["⚊", "⚋", "⚊", "⚋", "⚊", "⚋"] },
+            { number: 54, name: "화수두", symbols: ["⚊", "⚋", "⚊", "⚋", "⚋", "⚋"] },
+            { number: 55, name: "풍수로", symbols: ["⚋", "⚊", "⚋", "⚋", "⚊", "⚋"] },
+            { number: 56, name: "천수엽", symbols: ["⚊", "⚋", "⚋", "⚋", "⚋", "⚋"] },
+            { number: 57, name: "화수반", symbols: ["⚊", "⚋", "⚊", "⚋", "⚋", "⚊"] },
+            { number: 58, name: "풍수고", symbols: ["⚊", "⚊", "⚋", "⚋", "⚋", "⚊"] },
+            { number: 59, name: "천수비", symbols: ["⚋", "⚋", "⚊", "⚋", "⚋", "⚋"] },
+            { number: 60, name: "화수설", symbols: ["⚋", "⚋", "⚊", "⚊", "⚋", "⚊"] },
+            { number: 61, name: "풍수소", symbols: ["⚊", "⚊", "⚋", "⚋", "⚋", "⚋"] },
+            { number: 62, name: "산수차", symbols: ["⚋", "⚊", "⚊", "⚋", "⚋", "⚊"] },
+            { number: 63, name: "천수인", symbols: ["⚊", "⚊", "⚊", "⚋", "⚋", "⚊"] },
+            { number: 64, name: "화수성", symbols: ["⚊", "⚊", "⚊", "⚊", "⚊", "⚊"] }
+        ];
+
+        // 랜덤으로 두 괘를 선택하는 함수
+        function getRandomGua() {
+            const randomIndex1 = Math.floor(Math.random() * guaList.length);
+            const randomIndex2 = Math.floor(Math.random() * guaList.length);
+
+            const gua1 = guaList[randomIndex1];
+            const gua2 = guaList[randomIndex2];
+
+            // 괘 제목 및 기호 업데이트
+            document.getElementById('gua1Title').textContent = `${gua1.number} - ${gua1.name}`;
+            document.getElementById('gua2Title').textContent = `${gua2.number} - ${gua2.name}`;
+
+            // 첫 번째 괘의 기호 표시
+            const gua1Symbols = gua1.symbols.map(symbol => `<p>${symbol}</p>`).join('');
+            document.getElementById('gua1Symbols').innerHTML = gua1Symbols;
+
+            // 두 번째 괘의 기호 표시
+            const gua2Symbols = gua2.symbols.map(symbol => `<p>${symbol}</p>`).join('');
+            document.getElementById('gua2Symbols').innerHTML = gua2Symbols;
+
+            // 괘 표시 컨테이너 보이게 하기
+            document.getElementById('guaContainer').style.display = 'flex';
+        }
+
+        // 버튼 클릭 시 새로운 괘 받기
+        document.getElementById('newGuaBtn').addEventListener('click', function() {
+            getRandomGua();
+        });
+
+    </script>
+</body>
+</html
